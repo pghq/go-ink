@@ -13,7 +13,7 @@ go get github.com/pghq/go-ink
 ```
 import (
     "github.com/pghq/go-ink"
-    "github.com/pghq/go-ink/lang
+    "github.com/pghq/go-ink/lang"
 )
 ```
 
