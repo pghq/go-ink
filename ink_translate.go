@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/pghq/go-ark"
+	"github.com/pghq/go-ark/db"
 	"github.com/pghq/go-tea"
 
 	"github.com/pghq/go-ink/lang"
@@ -18,9 +18,9 @@ const (
 // Translate text
 func (l *Linguist) Translate(ctx context.Context, text string, targetLanguage lang.Language, opts ...lang.TranslateOption) (*lang.Text, error) {
 	var response *lang.Text
-	return response, l.conn.Do(ctx, func(tx *ark.KVSTxn) error {
+	return response, l.mapper.Do(ctx, func(tx db.Txn) error {
 		var translation lang.Text
-		_, err := tx.Get([]byte(text), &translation).Resolve()
+		err := tx.Get("", text, &translation)
 		if err == nil {
 			response = &translation
 			return nil
@@ -31,7 +31,6 @@ func (l *Linguist) Translate(ctx context.Context, text string, targetLanguage la
 			return tea.Error(err)
 		}
 
-		tx.InsertWithTTL([]byte(text), response, TranslateTTL)
-		return nil
+		return tx.Insert("", text, response, db.TTL(TranslateTTL))
 	})
 }

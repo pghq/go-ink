@@ -1,8 +1,6 @@
 package ink
 
 import (
-	"context"
-
 	"github.com/pghq/go-ark"
 
 	"github.com/pghq/go-ink/deepl"
@@ -12,15 +10,14 @@ import (
 // Linguist translates text to various languages
 type Linguist struct {
 	translator lang.Translator
-	conn       *ark.KVSConn
+	mapper     *ark.Mapper
 }
 
-// NewLinguist creates a new linguist instance
-func NewLinguist(authKey string, opts ...LinguistOption) *Linguist {
-	conn, _ := ark.Open().ConnectKVS(context.Background(), "inmem")
+// New creates a new linguist instance
+func New(authKey string, opts ...LinguistOption) *Linguist {
 	l := Linguist{
 		translator: deepl.NewClient(authKey),
-		conn:       conn,
+		mapper:     ark.New(),
 	}
 
 	for _, opt := range opts {
@@ -40,9 +37,9 @@ func Translator(o lang.Translator) LinguistOption {
 	}
 }
 
-// KVSConn sets a custom KVS client for the translator
-func KVSConn(o *ark.KVSConn) LinguistOption {
+// Mapper sets a custom data mapper
+func Mapper(o *ark.Mapper) LinguistOption {
 	return func(l *Linguist) {
-		l.conn = o
+		l.mapper = o
 	}
 }
