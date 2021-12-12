@@ -20,7 +20,7 @@ import (
 To create a new client:
 
 ```
-lin := ink.NewLinguist("your-api-key")
+lin := ink.New("your-api-key")
 text, err := lin.Translate(context.TODO(), "Hello, world!", lang.German)
 if err := radar.Error(); err != nil{
     panic(err)
