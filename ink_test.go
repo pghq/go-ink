@@ -16,14 +16,12 @@ import (
 func TestLinguist_Translate(t *testing.T) {
 	s := serve("testdata/hello-world-de.json")
 	dc := deepl.NewClient("", deepl.BaseURL(s.URL))
-	kvs, _ := ark.Open().ConnectKVS(context.TODO(), "inmem")
-
-	l := NewLinguist("", Translator(dc), KVSConn(kvs))
+	l := New("", Translator(dc), Mapper(ark.New()))
 
 	t.Run("bad translation", func(t *testing.T) {
 		s := serve("does-not-exit")
 		dc := deepl.NewClient("", deepl.BaseURL(s.URL))
-		l := NewLinguist("", Translator(dc))
+		l := New("", Translator(dc))
 
 		_, err := l.Translate(context.TODO(), "Hello, world!", lang.German)
 		assert.NotNil(t, err)
