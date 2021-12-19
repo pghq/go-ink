@@ -4,8 +4,8 @@ go 1.17
 
 require (
 	github.com/gorilla/schema v1.2.0
-	github.com/pghq/go-ark v0.0.41
-	github.com/pghq/go-tea v0.0.33
+	github.com/pghq/go-ark v0.0.49
+	github.com/pghq/go-tea v0.0.37
 	github.com/stretchr/testify v1.7.0
 )
 
