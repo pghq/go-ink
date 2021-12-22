@@ -38,16 +38,16 @@ func (c Client) Translate(ctx context.Context, text string, targetLanguage lang.
 
 	req, err := c.newRequest(ctx, "POST", "/translate", strings.NewReader(form.Encode()))
 	if err != nil {
-		return nil, tea.Error(err)
+		return nil, tea.Stack(err)
 	}
 
 	var resp TranslationResponse
 	if err := c.do(req, &resp); err != nil {
-		return nil, tea.Error(err)
+		return nil, tea.Stack(err)
 	}
 
 	if len(resp.Translations) == 0 {
-		return nil, tea.NewError("no translations")
+		return nil, tea.Err("no translations")
 	}
 
 	translation := lang.Text{

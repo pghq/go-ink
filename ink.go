@@ -10,14 +10,14 @@ import (
 // Linguist translates text to various languages
 type Linguist struct {
 	translator lang.Translator
-	mapper     *ark.Mapper
+	db         *ark.Mapper
 }
 
 // New creates a new linguist instance
 func New(authKey string, opts ...LinguistOption) *Linguist {
 	l := Linguist{
 		translator: deepl.NewClient(authKey),
-		mapper:     ark.New(),
+		db:         ark.New("memory://"),
 	}
 
 	for _, opt := range opts {
@@ -37,9 +37,9 @@ func Translator(o lang.Translator) LinguistOption {
 	}
 }
 
-// Mapper sets a custom data mapper
-func Mapper(o *ark.Mapper) LinguistOption {
+// Database sets a custom database
+func Database(o *ark.Mapper) LinguistOption {
 	return func(l *Linguist) {
-		l.mapper = o
+		l.db = o
 	}
 }
