@@ -54,7 +54,7 @@ func (c Client) do(req *http.Request, v interface{}) error {
 	resp, err := c.http.Do(req)
 	if err != nil {
 		if ctx := req.Context(); ctx != nil && ctx.Err() != nil {
-			return tea.Error(ctx.Err())
+			return tea.Stack(ctx.Err())
 		}
 
 		return err
@@ -66,13 +66,13 @@ func (c Client) do(req *http.Request, v interface{}) error {
 		}
 		res.Message = errorMessage(resp.StatusCode)
 		_ = json.NewDecoder(resp.Body).Decode(&res)
-		return tea.NewHTTPError(resp.StatusCode, res.Message)
+		return tea.AsErrTransfer(resp.StatusCode, tea.Err(res.Message))
 	}
 
 	defer resp.Body.Close()
 	if v != nil {
 		if err := json.NewDecoder(resp.Body).Decode(v); err != nil && err != io.EOF {
-			return tea.Error(err)
+			return tea.Stack(err)
 		}
 	}
 

@@ -4,19 +4,26 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/pghq/go-ark"
+	"github.com/pghq/go-tea"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/pghq/go-ink/deepl"
 	"github.com/pghq/go-ink/lang"
 )
 
+func TestMain(m *testing.M) {
+	tea.Testing()
+	os.Exit(m.Run())
+}
+
 func TestLinguist_Translate(t *testing.T) {
 	s := serve("testdata/hello-world-de.json")
 	dc := deepl.NewClient("", deepl.BaseURL(s.URL))
-	l := New("", Translator(dc), Mapper(ark.New()))
+	l := New("", Translator(dc), Database(ark.New("memory://")))
 
 	t.Run("bad translation", func(t *testing.T) {
 		s := serve("does-not-exit")
